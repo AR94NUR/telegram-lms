@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mini LMS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Скрипт Telegram WebApp (обязательно для запуска внутри Telegram) -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 16px;
+      background: #0f172a;
+      color: #e5e7eb;
+    }
+    h1 {
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+    label {
+      font-size: 14px;
+      margin-top: 6px;
+      margin-bottom: 2px;
+      display: block;
+    }
+    select, button {
+      width: 100%;
+      padding: 8px 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 1px solid #4b5563;
+      background: #020617;
+      color: #e5e7eb;
+    }
+    button {
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .tabs {
+      display: flex;
+      margin-top: 16px;
+      border-bottom: 1px solid #4b5563;
+    }
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 8px 0;
+      cursor: pointer;
+      font-size: 14px;
+      border-bottom: 2px solid transparent;
+    }
+    .tab.active {
+      border-bottom-color: #38bdf8;
+      font-weight: 600;
+    }
+    .tab-content {
+      margin-top: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .card {
+      background: #020617;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+      border: 1px solid #1f2937;
+    }
+    iframe {
+      width: 100%;
+      min-height: 220px;
+      border-radius: 12px;
+      border: none;
+    }
+    .option {
+      margin-bottom: 6px;
+      display: block;
+    }
+    .option input {
+      margin-right: 6px;
+    }
+    .result {
+      margin-top: 8px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <h1>Сабақ таңдаңыз</h1>
+
+  <label>Класс</label>
+  <select id="classSelect">
+    <option value="">– таңдаңыз –</option>
+  </select>
+
+  <label>Бөлім</label>
+  <select id="sectionSelect" disabled>
+    <option value="">– таңдаңыз –</option>
+  </select>
+
+  <label>Тақырып</label>
+  <select id="topicSelect" disabled>
+    <option value="">– таңдаңыз –</option>
+  </select>
+
+  <button id="openLessonBtn" disabled>Сабақты ашу</button>
+
+  <div id="lessonArea" style="display:none;">
+    <div class="card">
+      <div id="lessonTitle" style="font-weight:600; margin-bottom:6px;"></div>
+      <div id="lessonMeta" style="font-size:12px; color:#9ca3af;"></div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="theory">Теория</div>
+      <div class="tab" data-tab="presentation">Презентация</div>
+      <div class="tab" data-tab="video">Видео</div>
+      <div class="tab" data-tab="test">Тест</div>
+    </div>
+
+    <div class="tab-content" id="tabContent"></div>
+  </div>
+
+  <script>
+    // Инициализация Telegram WebApp (чтобы красиво выглядело внутри Телеги)
+    const tg = window.Telegram ? window.Telegram.WebApp : null;
+    if (tg) {
+      tg.expand(); // растянуть на максимум
+      tg.ready();
+    }
+
+    // ==== ДАННЫЕ УРОКОВ ===========================================
+    const lessonsData = [
+      {
+        className: "8-сынып",
+        sections: [
+          {
+            sectionName: "Компьютерлік желілер",
+            topics: [
+              {
+                topicName: "IP мекенжай және маска",
+                theory: `
+IP мекенжай – желідегі әрбір құрылғыға берілетін бірегей адрес.
+Маска – желі мен хост бөлігін ажыратуға арналған қызметтік параметр.
+Мысалы: 192.168.1.10 / 255.255.255.0
+                `,
+                presentationUrl: "https://example.com/ip-slides.pdf",
+                videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                test: [
+                  {
+                    question: "IP мекенжай не үшін қолданылады?",
+                    options: [
+                      "Құрылғының желідегі бірегей адресін көрсету үшін",
+                      "Файл өлшемін өлшеу үшін",
+                      "Процессор жиілігін белгілеу үшін",
+                      "Монитор рұқсат етілуін көрсету үшін"
+                    ],
+                    correctIndex: 0
+                  },
+                  {
+                    question: "Маска не үшін керек?",
+                    options: [
+                      "Құрылғының атын көрсету үшін",
+                      "Желі және хост бөлігін бөлу үшін",
+                      "Жады көлемін анықтау үшін",
+                      "Дыбыс картасын баптау үшін"
+                    ],
+                    correctIndex: 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      // сюда потом добавляешь новые классы/бөлім/тақырып
+    ];
+
+    // ==== UI ЛОГИКА ===============================================
+    const classSelect   = document.getElementById("classSelect");
+    const sectionSelect = document.getElementById("sectionSelect");
+    const topicSelect   = document.getElementById("topicSelect");
+    const openLessonBtn = document.getElementById("openLessonBtn");
+    const lessonArea    = document.getElementById("lessonArea");
+    const lessonTitle   = document.getElementById("lessonTitle");
+    const lessonMeta    = document.getElementById("lessonMeta");
+    const tabContent    = document.getElementById("tabContent");
+    const tabs          = document.querySelectorAll(".tab");
+
+    let currentLesson = null; // { cls, sec, topic }
+
+    // Заполняем список классов
+    lessonsData.forEach((c, idx) => {
+      const opt = document.createElement("option");
+      opt.value = idx;
+      opt.textContent = c.className;
+      classSelect.appendChild(opt);
+    });
+
+    classSelect.addEventListener("change", () => {
+      const classIndex = classSelect.value;
+      sectionSelect.innerHTML = '<option value="">– таңдаңыз –</option>';
+      topicSelect.innerHTML = '<option value="">– таңдаңыз –</option>';
+      sectionSelect.disabled = true;
+      topicSelect.disabled = true;
+      openLessonBtn.disabled = true;
+      lessonArea.style.display = "none";
+      currentLesson = null;
+
+      if (classIndex === "") return;
+
+      const cls = lessonsData[classIndex];
+      cls.sections.forEach((s, idx) => {
+        const opt = document.createElement("option");
+        opt.value = idx;
+        opt.textContent = s.sectionName;
+        sectionSelect.appendChild(opt);
+      });
+      sectionSelect.disabled = false;
+    });
+
+    sectionSelect.addEventListener("change", () => {
+      const classIndex   = classSelect.value;
+      const sectionIndex = sectionSelect.value;
+      topicSelect.innerHTML = '<option value="">– таңдаңыз –</option>';
+      topicSelect.disabled = true;
+      openLessonBtn.disabled = true;
+      lessonArea.style.display = "none";
+      currentLesson = null;
+
+      if (sectionIndex === "") return;
+
+      const sec = lessonsData[classIndex].sections[sectionIndex];
+      sec.topics.forEach((t, idx) => {
+        const opt = document.createElement("option");
+        opt.value = idx;
+        opt.textContent = t.topicName;
+        topicSelect.appendChild(opt);
+      });
+      topicSelect.disabled = false;
+    });
+
+    topicSelect.addEventListener("change", () => {
+      openLessonBtn.disabled = topicSelect.value === "";
+      lessonArea.style.display = "none";
+    });
+
+    openLessonBtn.addEventListener("click", () => {
+      const cIdx = classSelect.value;
+      const sIdx = sectionSelect.value;
+      const tIdx = topicSelect.value;
+      if (cIdx === "" || sIdx === "" || tIdx === "") return;
+
+      const cls   = lessonsData[cIdx];
+      const sec   = cls.sections[sIdx];
+      const topic = sec.topics[tIdx];
+
+      currentLesson = { cls, sec, topic };
+      renderLessonHeader();
+      setActiveTab("theory");
+      lessonArea.style.display = "block";
+    });
+
+    function renderLessonHeader() {
+      if (!currentLesson) return;
+      lessonTitle.textContent =
+        `${currentLesson.cls.className} • ${currentLesson.sec.sectionName}`;
+      lessonMeta.textContent = currentLesson.topic.topicName;
+    }
+
+    function setActiveTab(tabName) {
+      tabs.forEach(t => {
+        t.classList.toggle("active", t.dataset.tab === tabName);
+      });
+
+      if (!currentLesson) return;
+      const topic = currentLesson.topic;
+
+      if (tabName === "theory") {
+        tabContent.innerHTML = `
+          <div class="card">
+            <pre style="white-space:pre-wrap; font-family:inherit;">${topic.theory.trim()}</pre>
+          </div>
+        `;
+      } else if (tabName === "presentation") {
+        if (topic.presentationUrl) {
+          tabContent.innerHTML = `
+            <div class="card">
+              <p>Презентацияны ашу үшін төмендегі сілтемені басыңыз:</p>
+              <a href="${topic.presentationUrl}" target="_blank" style="color:#38bdf8;">
+                Презентацияны ашу
+              </a>
+            </div>
+          `;
+        } else {
+          tabContent.innerHTML = `<div class="card">Бұл тақырыпқа презентация тіркелмеген.</div>`;
+        }
+      } else if (tabName === "video") {
+        if (topic.videoUrl) {
+          tabContent.innerHTML = `
+            <div class="card">
+              <iframe src="${topic.videoUrl}" allowfullscreen></iframe>
+            </div>
+          `;
+        } else {
+          tabContent.innerHTML = `<div class="card">Видео жоқ.</div>`;
+        }
+      } else if (tabName === "test") {
+        if (!topic.test || topic.test.length === 0) {
+          tabContent.innerHTML = `<div class="card">Бұл тақырыпқа тест сұрақтары қосылмаған.</div>`;
+          return;
+        }
+
+        const container = document.createElement("div");
+        container.className = "card";
+
+        topic.test.forEach((q, qIndex) => {
+          const block = document.createElement("div");
+          block.style.marginBottom = "12px";
+
+          const qTitle = document.createElement("div");
+          qTitle.style.fontWeight = "600";
+          qTitle.style.marginBottom = "6px";
+          qTitle.textContent = (qIndex + 1) + ". " + q.question;
+          block.appendChild(qTitle);
+
+          q.options.forEach((opt, optIndex) => {
+            const label = document.createElement("label");
+            label.className = "option";
+
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = "q" + qIndex;
+            input.value = optIndex;
+
+            label.appendChild(input);
+            label.appendChild(document.createTextNode(opt));
+            block.appendChild(label);
+          });
+
+          container.appendChild(block);
+        });
+
+        const checkBtn = document.createElement("button");
+        checkBtn.textContent = "Жауаптарды тексеру";
+        checkBtn.onclick = () => {
+          let correct = 0;
+          topic.test.forEach((q, qIndex) => {
+            const selected = container.querySelector(
+              `input[name="q${qIndex}"]:checked`
+            );
+            if (!selected) return;
+            const answerIndex = parseInt(selected.value, 10);
+            if (answerIndex === q.correctIndex) correct++;
+          });
+          resultBox.textContent =
+            `Дұрыс жауаптар: ${correct} / ${topic.test.length}`;
+        };
+
+        const resultBox = document.createElement("div");
+        resultBox.className = "result";
+
+        container.appendChild(checkBtn);
+        container.appendChild(resultBox);
+
+        tabContent.innerHTML = "";
+        tabContent.appendChild(container);
+      }
+    }
+
+    tabs.forEach(t => {
+      t.addEventListener("click", () => {
+        setActiveTab(t.dataset.tab);
+      });
+    });
+
+  </script>
+</body>
+</html>
