@@ -374,7 +374,8 @@ IP мекенжай – желідегі әрбір құрылғыға бері�
             // videoUrl: "https://www.youtube.com/embed/ТВОЙ_ID",
 
             // Вариант 2: видеофайл в репо
-            videoUrl: "https://youtu.be/9vpnrNcAi9s?si=qll1fK0HLNbUGjP9",
+
+
 
             // 🔹 Тест сұрақтар
             test: [
@@ -537,13 +538,44 @@ IP мекенжай – желідегі әрбір құрылғыға бері�
         } else {
           tabContent.innerHTML = `<div class="card-inner">Бұл тақырыпқа презентация тіркелмеген.</div>`;
         }
-      } else if (tabName === "video") {
-        if (topic.videoUrl) {
-          tabContent.innerHTML = `
-            <div class="card-inner">
-              <iframe src="${topic.videoUrl}" allowfullscreen></iframe>
-            </div>
-          `;
+        } else if (tabName === "video") {
+    if (topic.videoUrl) {
+      tabContent.innerHTML = `
+        <div class="card-inner">
+          <p style="font-size:13px; margin-top:0; margin-bottom:10px;">
+            Видеоны көру үшін төмендегі батырманы басыңыз:
+          </p>
+          <button id="openVideoBtn"
+                  style="
+                    width:100%;
+                    padding:10px;
+                    border-radius:10px;
+                    border:none;
+                    font-size:14px;
+                    font-weight:600;
+                    cursor:pointer;
+                    background:#ef4444;
+                    color:#fff;
+                  ">
+            ▶ YouTube видеоны ашу
+          </button>
+        </div>
+      `;
+
+      const btn = document.getElementById("openVideoBtn");
+      btn.onclick = () => {
+        // Егер Telegram WebApp бар болса – сол арқылы ашады
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
+          window.Telegram.WebApp.openLink(topic.videoUrl);
+        } else {
+          // Әдеттегі браузерде ашу (тест үшін)
+          window.open(topic.videoUrl, "_blank");
+        }
+      };
+    } else {
+      tabContent.innerHTML = `<div class="card-inner">Видео жоқ.</div>`;
+    }
+
         } else {
           tabContent.innerHTML = `<div class="card-inner">Видео жоқ.</div>`;
         }
@@ -630,6 +662,7 @@ IP мекенжай – желідегі әрбір құрылғыға бері�
   </script>
 </body>
 </html>
+
 
 
 
