@@ -510,148 +510,144 @@ IP мекенжай – желідегі әрбір құрылғыға бері�
     }
 
     function setActiveTab(tabName) {
-      tabs.forEach(t => {
-        t.classList.toggle("active", t.dataset.tab === tabName);
-      });
+  tabs.forEach(t => {
+    t.classList.toggle("active", t.dataset.tab === tabName);
+  });
 
-      if (!currentLesson) return;
-      const topic = currentLesson.topic;
+  if (!currentLesson) return;
+  const topic = currentLesson.topic;
 
-      if (tabName === "theory") {
-        tabContent.innerHTML = `
-          <div class="card-inner">
-            <pre style="white-space:pre-wrap; font-family:inherit;">${topic.theory.trim()}</pre>
-          </div>
-        `;
-      } else if (tabName === "presentation") {
-        if (topic.presentationUrl) {
-          tabContent.innerHTML = `
-            <div class="card-inner">
-              <p style="font-size:13px; margin-top:0;">
-                Презентацияны ашу үшін төмендегі сілтемені басыңыз:
-              </p>
-              <a href="${topic.presentationUrl}" target="_blank" style="color:#38bdf8; font-size:13px;">
-                Презентацияны ашу
-              </a>
-            </div>
-          `;
-        } else {
-          tabContent.innerHTML = `<div class="card-inner">Бұл тақырыпқа презентация тіркелмеген.</div>`;
-        }
-        } else if (tabName === "video") {
-    if (topic.videoUrl) {
+  // 1) Теория
+  if (tabName === "theory") {
+    tabContent.innerHTML = `
+      <div class="card-inner">
+        <pre style="white-space:pre-wrap; font-family:inherit;">${topic.theory.trim()}</pre>
+      </div>
+    `;
+
+  // 2) Презентация
+  } else if (tabName === "presentation") {
+    if (topic.presentationUrl) {
       tabContent.innerHTML = `
         <div class="card-inner">
-          <p style="font-size:13px; margin-top:0; margin-bottom:10px;">
-            Видеоны көру үшін төмендегі батырманы басыңыз:
+          <p style="font-size:13px; margin-top:0;">
+            Презентацияны ашу үшін төмендегі сілтемені басыңыз:
           </p>
-          <button id="openVideoBtn"
-                  style="
-                    width:100%;
-                    padding:10px;
-                    border-radius:10px;
-                    border:none;
-                    font-size:14px;
-                    font-weight:600;
-                    cursor:pointer;
-                    background:#ef4444;
-                    color:#fff;
-                  ">
-            ▶ YouTube видеоны ашу
-          </button>
+          <a href="${topic.presentationUrl}" target="_blank" style="color:#38bdf8; font-size:13px;">
+            Презентацияны ашу
+          </a>
         </div>
       `;
+    } else {
+      tabContent.innerHTML = `<div class="card-inner">Бұл тақырыпқа презентация тіркелмеген.</div>`;
+    }
 
-      const btn = document.getElementById("openVideoBtn");
-      btn.onclick = () => {
-        // Егер Telegram WebApp бар болса – сол арқылы ашады
-        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
-          window.Telegram.WebApp.openLink(topic.videoUrl);
-        } else {
-          // Әдеттегі браузерде ашу (тест үшін)
-          window.open(topic.videoUrl, "_blank");
-        }
-      };
+  // 3) Видео
+  } else if (tabName === "video") {
+    if (topic.videoUrl) {
+      // если будешь использовать mp4 из репо, поменяй videoUrl на "videos/что-то.mp4"
+      if (topic.videoUrl.endsWith(".mp4")) {
+        tabContent.innerHTML = `
+          <div class="card-inner">
+            <video controls style="width:100%; border-radius:12px;">
+              <source src="${topic.videoUrl}" type="video/mp4">
+              Браузер видео ойнатуды қолдамайды.
+            </video>
+          </div>
+        `;
+      } else {
+        // fallback: просто ссылка (если это Google Drive или что-то ещё)
+        tabContent.innerHTML = `
+          <div class="card-inner">
+            <p style="font-size:13px; margin-top:0; margin-bottom:10px;">
+              Видеоны көру үшін төмендегі сілтемені басыңыз:
+            </p>
+            <a href="${topic.videoUrl}" target="_blank"
+               style="display:block; padding:10px; text-align:center;
+                      border-radius:10px; background:#ef4444; color:#fff; font-size:14px;">
+              ▶ Видеоны ашу
+            </a>
+          </div>
+        `;
+      }
     } else {
       tabContent.innerHTML = `<div class="card-inner">Видео жоқ.</div>`;
     }
 
-        } else {
-          tabContent.innerHTML = `<div class="card-inner">Видео жоқ.</div>`;
-        }
-      } else if (tabName === "test") {
-        if (!topic.test || topic.test.length === 0) {
-          tabContent.innerHTML = `<div class="card-inner">Бұл тақырыпқа тест сұрақтары қосылмаған.</div>`;
-          return;
-        }
-
-        const container = document.createElement("div");
-        container.className = "card-inner";
-
-        topic.test.forEach((q, qIndex) => {
-          const block = document.createElement("div");
-          block.style.marginBottom = "12px";
-
-          const qTitle = document.createElement("div");
-          qTitle.style.fontWeight = "600";
-          qTitle.style.marginBottom = "6px";
-          qTitle.style.fontSize = "13px";
-          qTitle.textContent = (qIndex + 1) + ". " + q.question;
-          block.appendChild(qTitle);
-
-          q.options.forEach((opt, optIndex) => {
-            const label = document.createElement("label");
-            label.className = "option";
-
-            const input = document.createElement("input");
-            input.type = "radio";
-            input.name = "q" + qIndex;
-            input.value = optIndex;
-
-            label.appendChild(input);
-            label.appendChild(document.createTextNode(opt));
-            block.appendChild(label);
-          });
-
-          container.appendChild(block);
-        });
-
-        const checkBtn = document.createElement("button");
-        checkBtn.textContent = "Жауаптарды тексеру";
-        checkBtn.style.marginTop = "4px";
-        checkBtn.style.marginBottom = "4px";
-
-        const resultBox = document.createElement("div");
-        resultBox.className = "result";
-
-        checkBtn.onclick = () => {
-          let correct = 0;
-          topic.test.forEach((q, qIndex) => {
-            const selected = container.querySelector(
-              `input[name="q${qIndex}"]:checked`
-            );
-            if (!selected) return;
-            const answerIndex = parseInt(selected.value, 10);
-            if (answerIndex === q.correctIndex) correct++;
-          });
-
-          resultBox.textContent =
-            `Дұрыс жауаптар: ${correct} / ${topic.test.length}`;
-          resultBox.classList.remove("ok", "bad");
-          if (correct === topic.test.length) {
-            resultBox.classList.add("ok");
-          } else {
-            resultBox.classList.add("bad");
-          }
-        };
-
-        container.appendChild(checkBtn);
-        container.appendChild(resultBox);
-
-        tabContent.innerHTML = "";
-        tabContent.appendChild(container);
-      }
+  // 4) Тест
+  } else if (tabName === "test") {
+    if (!topic.test || topic.test.length === 0) {
+      tabContent.innerHTML = `<div class="card-inner">Бұл тақырыпқа тест сұрақтары қосылмаған.</div>`;
+      return;
     }
+
+    const container = document.createElement("div");
+    container.className = "card-inner";
+
+    topic.test.forEach((q, qIndex) => {
+      const block = document.createElement("div");
+      block.style.marginBottom = "12px";
+
+      const qTitle = document.createElement("div");
+      qTitle.style.fontWeight = "600";
+      qTitle.style.marginBottom = "6px";
+      qTitle.style.fontSize = "13px";
+      qTitle.textContent = (qIndex + 1) + ". " + q.question;
+      block.appendChild(qTitle);
+
+      q.options.forEach((opt, optIndex) => {
+        const label = document.createElement("label");
+        label.className = "option";
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "q" + qIndex;
+        input.value = optIndex;
+
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(opt));
+        block.appendChild(label);
+      });
+
+      container.appendChild(block);
+    });
+
+    const checkBtn = document.createElement("button");
+    checkBtn.textContent = "Жауаптарды тексеру";
+    checkBtn.style.marginTop = "4px";
+    checkBtn.style.marginBottom = "4px";
+
+    const resultBox = document.createElement("div");
+    resultBox.className = "result";
+
+    checkBtn.onclick = () => {
+      let correct = 0;
+      topic.test.forEach((q, qIndex) => {
+        const selected = container.querySelector(
+          `input[name="q${qIndex}"]:checked`
+        );
+        if (!selected) return;
+        const answerIndex = parseInt(selected.value, 10);
+        if (answerIndex === q.correctIndex) correct++;
+      });
+
+      resultBox.textContent =
+        `Дұрыс жауаптар: ${correct} / ${topic.test.length}`;
+      resultBox.classList.remove("ok", "bad");
+      if (correct === topic.test.length) {
+        resultBox.classList.add("ok");
+      } else {
+        resultBox.classList.add("bad");
+      }
+    };
+
+    container.appendChild(checkBtn);
+    container.appendChild(resultBox);
+
+    tabContent.innerHTML = "";
+    tabContent.appendChild(container);
+  }
+}
 
     tabs.forEach(t => {
       t.addEventListener("click", () => {
@@ -662,6 +658,7 @@ IP мекенжай – желідегі әрбір құрылғыға бері�
   </script>
 </body>
 </html>
+
 
 
 
