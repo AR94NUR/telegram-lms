@@ -2,9 +2,8 @@
 <html lang="kk">
 <head>
   <meta charset="UTF-8" />
-  <title>Mini LMS – ЭОО</title>
+  <title>Mini LMS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <style>
@@ -13,7 +12,7 @@
       --bg-card: #020617;
       --bg-elevated: #020617;
       --accent: #38bdf8;
-      --accent-soft: rgba(56, 189, 248, 0.15);
+      --accent-soft: rgba(56,189,248,0.15);
       --text-main: #e5e7eb;
       --text-muted: #9ca3af;
       --border-subtle: #1f2937;
@@ -21,725 +20,630 @@
       --success: #4ade80;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
       padding: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #020617 0, #020617 40%, #000 100%);
+      background: radial-gradient(circle at top, #0f172a 0, #020617 50%, #020617 100%);
       color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
     }
 
     .app {
-      width: 100%;
-      max-width: 900px;
-      padding: 16px;
+      max-width: 460px;
+      margin: 0 auto;
+      padding: 12px 16px 24px;
     }
 
-    .card {
-      background: rgba(15, 23, 42, 0.95);
-      border-radius: 18px;
-      border: 1px solid var(--border-subtle);
-      padding: 16px 18px;
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
-    }
-
-    .header {
+    /* Header bar */
+    .topbar {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .title-block h1 {
-      margin: 0;
-      font-size: 1.2rem;
-    }
-
-    .title-block p {
-      margin: 2px 0 0;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    .badge {
-      padding: 4px 10px;
+      justify-content: space-between;
+      padding: 10px 12px;
       border-radius: 999px;
-      border: 1px solid var(--accent-soft);
-      font-size: 0.8rem;
+      border: 1px solid rgba(148,163,184,0.3);
+      background: linear-gradient(135deg, rgba(15,23,42,0.95), rgba(15,23,42,0.8));
+      backdrop-filter: blur(10px);
+      margin-bottom: 16px;
+    }
+    .topbar-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .topbar-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .topbar-badge {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
       color: var(--accent);
-      background: rgba(15, 23, 42, 0.8);
-      white-space: nowrap;
+      border: 1px solid rgba(56,189,248,0.4);
     }
 
-    .status-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-top: 4px;
+    /* Card */
+    .card {
+      background: rgba(15,23,42,0.95);
+      border-radius: 16px;
+      padding: 14px 14px 18px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 18px 40px rgba(15,23,42,0.8);
+      margin-bottom: 16px;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
       margin-bottom: 8px;
     }
 
-    .dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: var(--accent);
-      margin-right: 4px;
-    }
-
-    .status-left {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .selectors {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    @media (max-width: 720px) {
-      .selectors {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .select-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      font-size: 0.8rem;
-    }
-
-    .select-group label {
+    /* Form controls */
+    label {
+      font-size: 13px;
+      margin-top: 8px;
+      margin-bottom: 4px;
+      display: block;
       color: var(--text-muted);
     }
 
-    .select-group select {
-      padding: 6px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle);
-      background: rgba(15, 23, 42, 0.95);
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid #4b5563;
+      background: #020617;
       color: var(--text-main);
-      font-size: 0.82rem;
+      font-size: 13px;
+      margin-bottom: 6px;
       outline: none;
     }
 
-    .section-grid {
-      display: grid;
-      grid-template-columns: 1.1fr 1.1fr;
-      gap: 12px;
-      margin-bottom: 14px;
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(56,189,248,0.35);
     }
 
-    @media (max-width: 720px) {
-      .section-grid { grid-template-columns: 1fr; }
+    button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 9px 10px;
+      border-radius: 999px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, #22d3ee, #0ea5e9);
+      color: #0b1120;
+      box-shadow: 0 10px 25px rgba(56,189,248,0.45);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.15s ease;
     }
 
-    .section {
-      border-radius: 14px;
-      border: 1px solid var(--border-subtle);
-      padding: 10px 12px;
-      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.05), #020617);
+    button:disabled {
+      opacity: 0.45;
+      cursor: default;
+      box-shadow: none;
     }
 
-    .section-header {
+    button:not(:disabled):active {
+      transform: translateY(1px);
+      box-shadow: 0 5px 15px rgba(56,189,248,0.35);
+    }
+
+    .helper-text {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Lesson header */
+    .lesson-header-main {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 6px;
-      gap: 8px;
-    }
-
-    .section-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-    }
-
-    .section-tag {
-      font-size: 0.75rem;
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle);
-      color: var(--text-muted);
-    }
-
-    .section-body {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      max-height: 230px;
-      overflow-y: auto;
-      padding-right: 4px;
-      line-height: 1.45;
-      white-space: pre-wrap;
-    }
-
-    .link-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 4px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      border: 1px solid var(--accent-soft);
-      color: var(--accent);
-      background: rgba(15, 23, 42, 0.9);
-      cursor: pointer;
-      text-decoration: none;
-    }
-
-    .quiz-container { margin-top: 6px; }
-
-    .question {
-      margin-bottom: 10px;
-      padding-bottom: 8px;
-      border-bottom: 1px dashed var(--border-subtle);
-    }
-
-    .question-title {
-      font-size: 0.85rem;
       margin-bottom: 4px;
     }
 
-    .option {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.8rem;
-      margin-bottom: 2px;
-    }
-
-    .option input { transform: scale(0.9); }
-
-    .quiz-actions {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 8px;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .btn-primary {
-      padding: 6px 12px;
-      border-radius: 999px;
-      border: none;
-      font-size: 0.85rem;
-      background: var(--accent);
-      color: #020617;
+    #lessonTitle {
       font-weight: 600;
-      cursor: pointer;
+      font-size: 14px;
     }
 
-    .btn-primary:disabled {
-      opacity: 0.5;
-      cursor: default;
-    }
-
-    .result-text {
-      font-size: 0.8rem;
+    #lessonMeta {
+      font-size: 12px;
       color: var(--text-muted);
     }
 
-    .result-text.success { color: var(--success); }
-    .result-text.fail    { color: var(--danger); }
+    .chip {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(34,197,94,0.12);
+      color: #4ade80;
+      border: 1px solid rgba(74,222,128,0.4);
+    }
 
-    .error {
-      font-size: 0.8rem;
+    /* Tabs */
+    .tabs {
+      display: flex;
+      margin-top: 8px;
+      margin-bottom: 6px;
+      background: #020617;
+      border-radius: 999px;
+      border: 1px solid #1f2937;
+      padding: 3px;
+    }
+    .tab {
+      flex: 1;
+      text-align: center;
+      font-size: 12px;
+      padding: 6px 0;
+      border-radius: 999px;
+      cursor: pointer;
+      user-select: none;
+      color: var(--text-muted);
+    }
+    .tab.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .tab-content {
+      margin-top: 8px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .card-inner {
+      background: #020617;
+      border-radius: 12px;
+      padding: 10px;
+      border: 1px solid #111827;
+    }
+
+    pre {
+      margin: 0;
+    }
+
+    iframe {
+      width: 100%;
+      min-height: 220px;
+      border-radius: 12px;
+      border: none;
+      background: #020617;
+    }
+
+    .option {
+      margin-bottom: 6px;
+      display: block;
+      font-size: 13px;
+    }
+
+    .option input {
+      margin-right: 6px;
+    }
+
+    .result {
+      margin-top: 8px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .result.ok {
+      color: var(--success);
+    }
+    .result.bad {
       color: var(--danger);
-      margin-top: 4px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--text-muted);
+      opacity: 0.7;
     }
   </style>
 </head>
 <body>
-<div class="app">
-  <div class="card">
-    <div class="header">
-      <div class="title-block">
-        <h1>ЭОО • Mini LMS</h1>
-        <p id="lessonTitle">Сабақты таңдап алыңыз</p>
+  <div class="app">
+    <!-- Верхняя "капсула" -->
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">Mini LMS</div>
+        <div class="topbar-sub">Класс • Бөлім • Тақырып • Тест</div>
       </div>
-      <div class="badge">Telegram WebApp</div>
+      <div class="topbar-badge">Telegram WebApp</div>
     </div>
 
-    <div class="status-bar">
-      <div class="status-left">
-        <div class="dot"></div>
-        <span id="statusText">Сабақ параметрлерін таңдаңыз</span>
-      </div>
-      <span id="userName"></span>
-    </div>
+    <!-- Блок выбора урока -->
+    <div class="card">
+      <div class="card-title">Сабақты таңдаңыз</div>
 
-    <!-- Сынып / Бөлім / Тақырып таңдағышы -->
-    <div class="selectors">
-      <div class="select-group">
-        <label for="classSelect">Сынып</label>
-        <select id="classSelect">
-          <option value="">Сыныпты таңдаңыз</option>
-        </select>
-      </div>
-      <div class="select-group">
-        <label for="sectionSelect">Бөлім</label>
-        <select id="sectionSelect" disabled>
-          <option value="">Бөлімді таңдаңыз</option>
-        </select>
-      </div>
-      <div class="select-group">
-        <label for="topicSelect">Тақырып</label>
-        <select id="topicSelect" disabled>
-          <option value="">Тақырыпты таңдаңыз</option>
-        </select>
+      <label>Класс</label>
+      <select id="classSelect">
+        <option value="">– таңдаңыз –</option>
+      </select>
+
+      <label>Бөлім</label>
+      <select id="sectionSelect" disabled>
+        <option value="">– таңдаңыз –</option>
+      </select>
+
+      <label>Тақырып</label>
+      <select id="topicSelect" disabled>
+        <option value="">– таңдаңыз –</option>
+      </select>
+
+      <button id="openLessonBtn" disabled>Сабақты ашу</button>
+      <div class="helper-text">
+        Алдымен класс, содан кейін бөлім мен тақырыпты таңдаңыз.
       </div>
     </div>
 
-    <div class="section-grid">
-      <!-- Презентация (PDF) -->
-      <section class="section">
-        <div class="section-header">
-          <span class="section-title">Презентация (PDF)</span>
-          <span class="section-tag">GitHub</span>
+    <!-- Блок содержимого урока -->
+    <div id="lessonArea" style="display:none;">
+      <div class="card">
+        <div class="lesson-header-main">
+          <div id="lessonTitle"></div>
+          <div class="chip">Белсенді сабақ</div>
         </div>
-        <div class="section-body" id="presentationBody">
-          Алдымен сынып, бөлім және тақырыпты таңдаңыз.
-        </div>
-      </section>
+        <div id="lessonMeta"></div>
 
-      <!-- Теория (PDF) -->
-      <section class="section">
-        <div class="section-header">
-          <span class="section-title">Теория (PDF)</span>
-          <span class="section-tag">GitHub</span>
+        <div class="tabs">
+          <div class="tab active" data-tab="theory">Теория</div>
+          <div class="tab" data-tab="presentation">Презентация</div>
+          <div class="tab" data-tab="video">Видео</div>
+          <div class="tab" data-tab="test">Тест</div>
         </div>
-        <div class="section-body" id="theoryBody">
-          Алдымен сынып, бөлім және тақырыпты таңдаңыз.
-        </div>
-      </section>
+
+        <div class="tab-content" id="tabContent"></div>
+      </div>
     </div>
 
-    <!-- Тест бөлігі -->
-    <section class="section">
-      <div class="section-header">
-        <span class="section-title">Бақылау сұрақтары</span>
-        <span class="section-tag">Тест • GitHub</span>
-      </div>
-      <div class="section-body">
-        <div id="quizContainer" class="quiz-container">
-          Алдымен тақырып таңдаңыз.
-        </div>
-
-        <div class="quiz-actions">
-          <button id="submitQuizBtn" class="btn-primary" disabled>Тестті аяқтау</button>
-          <span id="quizResult" class="result-text"></span>
-        </div>
-      </div>
-    </section>
-
-    <div id="globalError" class="error" style="display:none;"></div>
+    <div class="footer">
+      🧠 Оқытушыға арналған эксперименттік мини-LMS
+    </div>
   </div>
-</div>
 
-<script>
-  const tg = window.Telegram?.WebApp;
-  if (tg) {
-    tg.expand();
-    tg.ready();
+  <script>
+    // Telegram WebApp интеграция
+    const tg = window.Telegram ? window.Telegram.WebApp : null;
+    if (tg) {
+      tg.expand();
+      tg.ready();
+    }
+
+    // ==== ДАННЫЕ УРОКОВ ===========================================
+    const lessonsData = [
+  {
+    className: "11-сынып",
+    sections: [
+      {
+        sectionName: "Стартап",
+        topics: [
+          {
+            topicName: "Стартап деген не?",
+
+            // Егер теория PDF форматта болса:
+            theory: "",  // қажет болмаса бос қалдыра бер
+            theoryPdfUrl: "https://github.com/AR94NUR/telegram-lms/blob/main/lesson1/1-ТАҚЫРЫП.pdf?raw=1",
+
+            presentationUrl: "https://github.com/AR94NUR/telegram-lms/blob/main/lesson1/1-taqirip.pdf?raw=1",
+            videoUrl: "https://youtu.be/9vpnrNcAi9s?si=0z-aYweIQWdTtpjW",
+            test: [
+  {
+    question: "1) Стартаптың бастапқы кезеңі қалай аталады?",
+    options: [
+      "Seed",
+      "Beta",
+      "Pre-seed",
+      "Prototype"
+    ],
+    correctIndex: 2 // A:3 → Pre-seed
+  },
+  {
+    question: "2) Seed кезеңінде не орындалады?",
+    options: [
+      "Прототип құру",
+      "Нарықты зерттеу",
+      "Өнімді сату",
+      "Альфа тест"
+    ],
+    correctIndex: 1 // A:2 → Нарықты зерттеу
+  },
+  {
+    question: "3) Альфа нұсқа деген не?",
+    options: [
+      "Өнімнің алғашқы идеясы",
+      "Кең аудиторияға шығару",
+      "Шағын топқа тестілеу",
+      "Прототип құрастыру"
+    ],
+    correctIndex: 2 // A:3 → Шағын топқа тестілеу
+  },
+  {
+    question: "4) Стартаптың мақсаты қандай?",
+    options: [
+      "Жай трендке қосылу",
+      "Пайдалы өнім шығару",
+      "Тек ақша жинау",
+      "Прототипті көбейту"
+    ],
+    correctIndex: 1 // A:2 → Пайдалы өнім шығару
+  },
+  {
+    question: "5) Көшірме стартап деген",
+    options: [
+      "Нарық басып алу",
+      "Шетелдік жобаның көшірмесі",
+      "Белгісіз бағыт",
+      "Технологиясыз стартап"
+    ],
+    correctIndex: 1 // A:2 → Шетелдік жобаның көшірмесі
   }
+]
 
-  function setUserName() {
-    try {
-      const user = tg?.initDataUnsafe?.user;
-      if (user) {
-        const name = (user.first_name || "") + " " + (user.last_name || "");
-        document.getElementById("userName").textContent = name.trim();
+          }
+        ]
       }
-    } catch (e) {}
-  }
-  setUserName();
+    ]
+  },
+];
 
-  function setStatus(text) {
-    const el = document.getElementById("statusText");
-    if (el) el.textContent = text;
-  }
 
-  function setGlobalError(msg) {
-    const el = document.getElementById("globalError");
-    if (!el) return;
-    if (!msg) {
-      el.style.display = "none";
-      el.textContent = "";
-      return;
-    }
-    el.style.display = "block";
-    el.textContent = msg;
-  }
+    // ==== UI ЛОГИКА ===============================================
+    const classSelect   = document.getElementById("classSelect");
+    const sectionSelect = document.getElementById("sectionSelect");
+    const topicSelect   = document.getElementById("topicSelect");
+    const openLessonBtn = document.getElementById("openLessonBtn");
+    const lessonArea    = document.getElementById("lessonArea");
+    const lessonTitle   = document.getElementById("lessonTitle");
+    const lessonMeta    = document.getElementById("lessonMeta");
+    const tabContent    = document.getElementById("tabContent");
+    const tabs          = document.querySelectorAll(".tab");
 
-  async function safeFetch(url) {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error("HTTP " + response.status + " – " + url);
-    }
-    return await response.text();
-  }
+    let currentLesson = null; // { cls, sec, topic }
 
-  // ================== LESSON CONFIG ==================
-  // МЫНАНЫҢ ІШІНДЕ БАРЛЫҚ САБАҚТАРДЫ ТІЗІП ШЫҒАСЫҢ
-  // ӘР ЖОЛ – ЖЕКЕ САБАҚ
-  const LESSONS = [
-    {
-      class: "8-сынып",
-      section: "Интернет және желілер",
-      topic: "IP-мекенжай және маска",
-      lessonTitle: "IP-мекенжай және желі маскасы",
-      theoryPdf: "https://github.com/username/repo/blob/main/lesson1/theory.pdf?raw=1",
-      presentationPdf: "https://github.com/username/repo/blob/main/lesson1/presentation.pdf?raw=1",
-      questionsUrl: "https://raw.githubusercontent.com/username/repo/main/lesson1/questions.txt"
-    },
-    {
-      class: "8-сынып",
-      section: "Интернет және желілер",
-      topic: "DNS және домендер",
-      lessonTitle: "Домендік атаулар және DNS",
-      theoryPdf: "https://github.com/username/repo/blob/main/lesson2/theory.pdf?raw=1",
-      presentationPdf: "https://github.com/username/repo/blob/main/lesson2/presentation.pdf?raw=1",
-      questionsUrl: "https://raw.githubusercontent.com/username/repo/main/lesson2/questions.txt"
-    },
-    {
-      class: "9-сынып",
-      section: "Алгоритмдеу",
-      topic: "Циклдер: While",
-      lessonTitle: "While циклі",
-      theoryPdf: "https://github.com/username/repo/blob/main/lesson3/theory.pdf?raw=1",
-      presentationPdf: "https://github.com/username/repo/blob/main/lesson3/presentation.pdf?raw=1",
-      questionsUrl: "https://raw.githubusercontent.com/username/repo/main/lesson3/questions.txt"
-    },
-    {
-      class: "11-сынып",
-      section: "Стартап",
-      topic: "Стартап деген не? Стартап кезеңдері",
-      lessonTitle: "Стартап деген не?",
-      theoryPdf: "https://github.com/AR94NUR/telegram-lms/blob/main/lesson1/1-ТАҚЫРЫП.pdf",
-      presentationPdf: "https://github.com/AR94NUR/telegram-lms/blob/main/lesson1/1-taqirip.pdf?raw=1",
-      questionsUrl: "https://raw.githubusercontent.com/AR94NUR/telegram-lms/refs/heads/main/lesson1/questions.txt"
-    }
-  ];
-
-  // ================== SELECTOR ЛОГИКАСЫ ==================
-
-  const classSelect = document.getElementById("classSelect");
-  const sectionSelect = document.getElementById("sectionSelect");
-  const topicSelect = document.getElementById("topicSelect");
-
-  let currentLesson = null;
-  let quizData = [];
-
-  function initClassOptions() {
-    const classes = [...new Set(LESSONS.map(l => l.class))];
-    for (const cls of classes) {
+    // Заполняем список классов
+    lessonsData.forEach((c, idx) => {
       const opt = document.createElement("option");
-      opt.value = cls;
-      opt.textContent = cls;
+      opt.value = idx;
+      opt.textContent = c.className;
       classSelect.appendChild(opt);
-    }
-  }
-
-  function updateSectionOptions() {
-    sectionSelect.innerHTML = '<option value="">Бөлімді таңдаңыз</option>';
-    topicSelect.innerHTML = '<option value="">Тақырыпты таңдаңыз</option>';
-    sectionSelect.disabled = true;
-    topicSelect.disabled = true;
-
-    const cls = classSelect.value;
-    if (!cls) return;
-
-    const sections = [...new Set(
-      LESSONS.filter(l => l.class === cls).map(l => l.section)
-    )];
-
-    for (const sec of sections) {
-      const opt = document.createElement("option");
-      opt.value = sec;
-      opt.textContent = sec;
-      sectionSelect.appendChild(opt);
-    }
-
-    sectionSelect.disabled = false;
-  }
-
-  function updateTopicOptions() {
-    topicSelect.innerHTML = '<option value="">Тақырыпты таңдаңыз</option>';
-    topicSelect.disabled = true;
-
-    const cls = classSelect.value;
-    const sec = sectionSelect.value;
-    if (!cls || !sec) return;
-
-    const topics = LESSONS
-      .filter(l => l.class === cls && l.section === sec)
-      .map(l => l.topic);
-
-    for (const t of topics) {
-      const opt = document.createElement("option");
-      opt.value = t;
-      opt.textContent = t;
-      topicSelect.appendChild(opt);
-    }
-
-    topicSelect.disabled = false;
-  }
-
-  function onTopicSelected() {
-    const cls = classSelect.value;
-    const sec = sectionSelect.value;
-    const topic = topicSelect.value;
-
-    currentLesson = LESSONS.find(
-      l => l.class === cls && l.section === sec && l.topic === topic
-    ) || null;
-
-    quizData = [];
-    document.getElementById("quizContainer").textContent = "Сұрақтар жүктелуде...";
-    document.getElementById("submitQuizBtn").disabled = true;
-    document.getElementById("quizResult").textContent = "";
-    setGlobalError("");
-
-    if (!currentLesson) {
-      document.getElementById("lessonTitle").textContent = "Сабақ табылмады";
-      document.getElementById("presentationBody").textContent = "Бұл параметрлер үшін сабақ жоқ.";
-      document.getElementById("theoryBody").textContent = "Бұл параметрлер үшін сабақ жоқ.";
-      setStatus("Сабақ табылмады.");
-      return;
-    }
-
-    document.getElementById("lessonTitle").textContent = currentLesson.lessonTitle || "Сабақ";
-    renderPdfLinks();
-    loadQuestions();
-  }
-
-  classSelect.addEventListener("change", () => {
-    updateSectionOptions();
-    document.getElementById("lessonTitle").textContent = "Сабақты таңдаңыз";
-    document.getElementById("presentationBody").textContent = "Алдымен бөлім және тақырыпты таңдаңыз.";
-    document.getElementById("theoryBody").textContent = "Алдымен бөлім және тақырыпты таңдаңыз.";
-    document.getElementById("quizContainer").textContent = "Алдымен тақырып таңдаңыз.";
-    document.getElementById("submitQuizBtn").disabled = true;
-    document.getElementById("quizResult").textContent = "";
-    setStatus("Бөлім мен тақырыпты таңдаңыз.");
-  });
-
-  sectionSelect.addEventListener("change", () => {
-    updateTopicOptions();
-    document.getElementById("lessonTitle").textContent = "Сабақты таңдаңыз";
-    document.getElementById("presentationBody").textContent = "Алдымен тақырыпты таңдаңыз.";
-    document.getElementById("theoryBody").textContent = "Алдымен тақырыпты таңдаңыз.";
-    document.getElementById("quizContainer").textContent = "Алдымен тақырып таңдаңыз.";
-    document.getElementById("submitQuizBtn").disabled = true;
-    document.getElementById("quizResult").textContent = "";
-    setStatus("Тақырыпты таңдаңыз.");
-  });
-
-  topicSelect.addEventListener("change", () => {
-    if (!topicSelect.value) return;
-    setStatus("Сабақ деректері жүктелуде...");
-    onTopicSelected();
-  });
-
-  // ================== PDF LINK РЕНДЕР ==================
-
-  function renderPdfLinks() {
-    const presBody = document.getElementById("presentationBody");
-    const theoryBody = document.getElementById("theoryBody");
-
-    presBody.innerHTML = "";
-    theoryBody.innerHTML = "";
-
-    if (!currentLesson) {
-      presBody.textContent = "Сабақ таңдалмаған.";
-      theoryBody.textContent = "Сабақ таңдалмаған.";
-      return;
-    }
-
-    if (currentLesson.presentationPdf) {
-      const a = document.createElement("a");
-      a.href = currentLesson.presentationPdf;
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
-      a.className = "link-btn";
-      a.textContent = "Презентацияны ашу (PDF)";
-      presBody.appendChild(a);
-    } else {
-      presBody.textContent = "Презентация PDF сілтемесі орнатылмаған.";
-    }
-
-    if (currentLesson.theoryPdf) {
-      const a = document.createElement("a");
-      a.href = currentLesson.theoryPdf;
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
-      a.className = "link-btn";
-      a.textContent = "Теорияны ашу (PDF)";
-      theoryBody.appendChild(a);
-    } else {
-      theoryBody.textContent = "Теория PDF сілтемесі орнатылмаған.";
-    }
-  }
-
-  // ================== ТЕСТ СҰРАҚТАРЫ ==================
-
-  function parseQuestions(text) {
-    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-    const result = [];
-
-    for (const line of lines) {
-      const parts = line.split("|").map(p => p.trim());
-      if (parts.length < 6) continue;
-
-      const [q, a, b, c, d, correctRaw] = parts;
-      const correctIndex = parseInt(correctRaw, 10) - 1;
-
-      if (isNaN(correctIndex) || correctIndex < 0 || correctIndex > 3) continue;
-
-      result.push({
-        text: q,
-        options: [a, b, c, d],
-        correctIndex
-      });
-    }
-
-    return result;
-  }
-
-  function renderQuiz() {
-    const container = document.getElementById("quizContainer");
-    if (!quizData.length) {
-      container.textContent = "Сұрақтар әзірге жоқ.";
-      document.getElementById("submitQuizBtn").disabled = true;
-      return;
-    }
-
-    container.innerHTML = "";
-
-    quizData.forEach((q, qi) => {
-      const qDiv = document.createElement("div");
-      qDiv.className = "question";
-
-      const title = document.createElement("div");
-      title.className = "question-title";
-      title.textContent = (qi + 1) + ". " + q.text;
-      qDiv.appendChild(title);
-
-      q.options.forEach((opt, oi) => {
-        const label = document.createElement("label");
-        label.className = "option";
-
-        const input = document.createElement("input");
-        input.type = "radio";
-        input.name = "q" + qi;
-        input.value = String(oi);
-
-        label.appendChild(input);
-        label.appendChild(document.createTextNode(opt));
-        qDiv.appendChild(label);
-      });
-
-      container.appendChild(qDiv);
     });
 
-    document.getElementById("submitQuizBtn").disabled = false;
-  }
+    classSelect.addEventListener("change", () => {
+      const classIndex = classSelect.value;
+      sectionSelect.innerHTML = '<option value="">– таңдаңыз –</option>';
+      topicSelect.innerHTML   = '<option value="">– таңдаңыз –</option>';
+      sectionSelect.disabled = true;
+      topicSelect.disabled   = true;
+      openLessonBtn.disabled = true;
+      lessonArea.style.display = "none";
+      currentLesson = null;
 
-  async function loadQuestions() {
-    const container = document.getElementById("quizContainer");
+      if (classIndex === "") return;
 
-    if (!currentLesson || !currentLesson.questionsUrl) {
-      container.textContent = "Бұл тақырып үшін сұрақтар сілтемесі орнатылмаған.";
-      document.getElementById("submitQuizBtn").disabled = true;
-      setStatus("Сұрақтар табылмады.");
-      return;
-    }
-
-    try {
-      setStatus("Сұрақтар жүктелуде...");
-      const text = await safeFetch(currentLesson.questionsUrl);
-      quizData = parseQuestions(text);
-      renderQuiz();
-      setStatus("Сабақ жүктелді.");
-      setGlobalError("");
-    } catch (e) {
-      console.error(e);
-      container.textContent = "Сұрақтарды жүктеу кезінде қате.";
-      setGlobalError("Тест сұрақтарын GitHub-тен жүктеу мүмкін болмады.");
-      document.getElementById("submitQuizBtn").disabled = true;
-      setStatus("Қате пайда болды.");
-    }
-  }
-
-  function calculateQuizResult() {
-    if (!quizData.length) return { score: 0, total: 0 };
-
-    let correct = 0;
-    quizData.forEach((q, qi) => {
-      const selected = document.querySelector('input[name="q' + qi + '"]:checked');
-      if (!selected) return;
-      const idx = parseInt(selected.value, 10);
-      if (idx === q.correctIndex) correct++;
+      const cls = lessonsData[classIndex];
+      cls.sections.forEach((s, idx) => {
+        const opt = document.createElement("option");
+        opt.value = idx;
+        opt.textContent = s.sectionName;
+        sectionSelect.appendChild(opt);
+      });
+      sectionSelect.disabled = false;
     });
 
-    return { score: correct, total: quizData.length };
-  }
+    sectionSelect.addEventListener("change", () => {
+      const classIndex   = classSelect.value;
+      const sectionIndex = sectionSelect.value;
+      topicSelect.innerHTML = '<option value="">– таңдаңыз –</option>';
+      topicSelect.disabled  = true;
+      openLessonBtn.disabled = true;
+      lessonArea.style.display = "none";
+      currentLesson = null;
 
-  function handleSubmitQuiz() {
-    const { score, total } = calculateQuizResult();
-    const resultEl = document.getElementById("quizResult");
+      if (sectionIndex === "") return;
 
-    if (!total) {
-      resultEl.textContent = "Сұрақтар жоқ.";
-      resultEl.className = "result-text";
-      return;
+      const sec = lessonsData[classIndex].sections[sectionIndex];
+      sec.topics.forEach((t, idx) => {
+        const opt = document.createElement("option");
+        opt.value = idx;
+        opt.textContent = t.topicName;
+        topicSelect.appendChild(opt);
+      });
+      topicSelect.disabled = false;
+    });
+
+    topicSelect.addEventListener("change", () => {
+      openLessonBtn.disabled = topicSelect.value === "";
+      lessonArea.style.display = "none";
+    });
+
+    openLessonBtn.addEventListener("click", () => {
+      const cIdx = classSelect.value;
+      const sIdx = sectionSelect.value;
+      const tIdx = topicSelect.value;
+      if (cIdx === "" || sIdx === "" || tIdx === "") return;
+
+      const cls   = lessonsData[cIdx];
+      const sec   = cls.sections[sIdx];
+      const topic = sec.topics[tIdx];
+
+      currentLesson = { cls, sec, topic };
+      renderLessonHeader();
+      setActiveTab("theory");
+      lessonArea.style.display = "block";
+    });
+
+    function renderLessonHeader() {
+      if (!currentLesson) return;
+      lessonTitle.textContent =
+        `${currentLesson.cls.className} • ${currentLesson.sec.sectionName}`;
+      lessonMeta.textContent = currentLesson.topic.topicName;
     }
 
-    const percent = Math.round((score / total) * 100);
-    let cls = "result-text";
-    if (percent >= 70) cls += " success";
-    else cls += " fail";
+    function setActiveTab(tabName) {
+      tabs.forEach(t => {
+        t.classList.toggle("active", t.dataset.tab === tabName);
+      });
 
-    resultEl.className = cls;
-    resultEl.textContent = `Нәтиже: ${score}/${total} (${percent}%)`;
+      if (!currentLesson) return;
+      const topic = currentLesson.topic;
 
-    try {
-      if (tg && tg.sendData) {
-        const payload = {
-          type: "test_result",
-          score,
-          total,
-          percent,
-          lessonTitle: currentLesson?.lessonTitle || ""
-        };
-        tg.sendData(JSON.stringify(payload));
+        if (tabName === "theory") {
+    // Егер PDF-сілтеме бар болса – сілтеме көрсетеміз
+    if (topic.theoryPdfUrl) {
+      tabContent.innerHTML = `
+        <div class="card-inner">
+          <p style="font-size:13px; margin-top:0;">
+            Теорияны ашу үшін төмендегі сілтемені басыңыз:
+          </p>
+          <a href="${topic.theoryPdfUrl}"
+             target="_blank"
+             style="color:#38bdf8; font-size:13px;">
+            Теория (PDF)
+          </a>
+        </div>
+      `;
+    } else {
+      // Егер PDF жоқ болса, ескі текстік вариантты қалдырамыз
+      tabContent.innerHTML = `
+        <div class="card-inner">
+          <pre style="white-space:pre-wrap; font-family:inherit;">${(topic.theory || "").trim()}</pre>
+        </div>
+        `;
+      } else if (tabName === "presentation") {
+        if (topic.presentationUrl) {
+          tabContent.innerHTML = `
+            <div class="card-inner">
+              <p style="font-size:13px; margin-top:0;">
+                Презентацияны ашу үшін төмендегі сілтемені басыңыз:
+              </p>
+              <a href="${topic.presentationUrl}" target="_blank" style="color:#38bdf8; font-size:13px;">
+                Презентацияны ашу
+              </a>
+            </div>
+          `;
+        } else {
+          tabContent.innerHTML = `<div class="card-inner">Бұл тақырыпқа презентация тіркелмеген.</div>`;
+        }
+      } else if (tabName === "video") {
+        if (topic.videoUrl) {
+          tabContent.innerHTML = `
+            <div class="card-inner">
+              <iframe src="${topic.videoUrl}" allowfullscreen></iframe>
+            </div>
+          `;
+        } else {
+          tabContent.innerHTML = `<div class="card-inner">Видео жоқ.</div>`;
+        }
+      } else if (tabName === "test") {
+        if (!topic.test || topic.test.length === 0) {
+          tabContent.innerHTML = `<div class="card-inner">Бұл тақырыпқа тест сұрақтары қосылмаған.</div>`;
+          return;
+        }
+
+        const container = document.createElement("div");
+        container.className = "card-inner";
+
+        topic.test.forEach((q, qIndex) => {
+          const block = document.createElement("div");
+          block.style.marginBottom = "12px";
+
+          const qTitle = document.createElement("div");
+          qTitle.style.fontWeight = "600";
+          qTitle.style.marginBottom = "6px";
+          qTitle.style.fontSize = "13px";
+          qTitle.textContent = (qIndex + 1) + ". " + q.question;
+          block.appendChild(qTitle);
+
+          q.options.forEach((opt, optIndex) => {
+            const label = document.createElement("label");
+            label.className = "option";
+
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = "q" + qIndex;
+            input.value = optIndex;
+
+            label.appendChild(input);
+            label.appendChild(document.createTextNode(opt));
+            block.appendChild(label);
+          });
+
+          container.appendChild(block);
+        });
+
+        const checkBtn = document.createElement("button");
+        checkBtn.textContent = "Жауаптарды тексеру";
+        checkBtn.style.marginTop = "4px";
+        checkBtn.style.marginBottom = "4px";
+
+        const resultBox = document.createElement("div");
+        resultBox.className = "result";
+
+        checkBtn.onclick = () => {
+  let correct = 0;
+  topic.test.forEach((q, qIndex) => {
+    const selected = container.querySelector(
+      `input[name="q${qIndex}"]:checked`
+    );
+    if (!selected) return;
+    const answerIndex = parseInt(selected.value, 10);
+    if (answerIndex === q.correctIndex) correct++;
+  });
+
+  const total = topic.test.length;
+  const percent = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+  resultBox.textContent =
+    `Дұрыс жауаптар: ${correct} / ${total}`;
+  resultBox.classList.remove("ok", "bad");
+  if (correct === total) {
+    resultBox.classList.add("ok");
+  } else {
+    resultBox.classList.add("bad");
+  }
+
+  // МІНЕ ОСЫ ЖЕР – TELEGRAM-ҒА НӘТИЖЕ ЖІБЕРУ
+  if (tg && tg.sendData && currentLesson) {
+    const payload = {
+      type: "test_result",
+      score: correct,
+      total: total,
+      percent: percent,
+      className: currentLesson.cls.className,
+      sectionName: currentLesson.sec.sectionName,
+      topicName: currentLesson.topic.topicName
+    };
+    tg.sendData(JSON.stringify(payload));
+    // Қаласаң, тесттен кейін WebApp-ты жауып тастауға да болады:
+    // tg.close();
+  }
+};
+
+        container.appendChild(checkBtn);
+        container.appendChild(resultBox);
+
+        tabContent.innerHTML = "";
+        tabContent.appendChild(container);
       }
-    } catch (e) {
-      console.error("sendData error:", e);
     }
-  }
 
-  document.getElementById("submitQuizBtn").addEventListener("click", handleSubmitQuiz);
+    tabs.forEach(t => {
+      t.addEventListener("click", () => {
+        setActiveTab(t.dataset.tab);
+      });
+    });
 
-  // ================== INIT ==================
-  (function init() {
-    initClassOptions();
-    setStatus("Сыныпты таңдаңыз.");
-  })();
-</script>
+  </script>
 </body>
 </html>
-
