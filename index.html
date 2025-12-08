@@ -53,7 +53,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 12px;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
     .title-block h1 {
@@ -75,6 +75,64 @@
       color: var(--accent);
       background: rgba(15, 23, 42, 0.8);
       white-space: nowrap;
+    }
+
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      margin-bottom: 8px;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+      margin-right: 4px;
+    }
+
+    .status-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .selectors {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 720px) {
+      .selectors {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .select-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.8rem;
+    }
+
+    .select-group label {
+      color: var(--text-muted);
+    }
+
+    .select-group select {
+      padding: 6px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(15, 23, 42, 0.95);
+      color: var(--text-main);
+      font-size: 0.82rem;
+      outline: none;
     }
 
     .section-grid {
@@ -197,29 +255,6 @@
     .result-text.success { color: var(--success); }
     .result-text.fail    { color: var(--danger); }
 
-    .status-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    .dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: var(--accent);
-      margin-right: 4px;
-    }
-
-    .status-left {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
     .error {
       font-size: 0.8rem;
       color: var(--danger);
@@ -233,7 +268,7 @@
     <div class="header">
       <div class="title-block">
         <h1>ЭОО • Mini LMS</h1>
-        <p id="lessonTitle">Сабақ жүктелуде...</p>
+        <p id="lessonTitle">Сабақты таңдап алыңыз</p>
       </div>
       <div class="badge">Telegram WebApp</div>
     </div>
@@ -241,12 +276,32 @@
     <div class="status-bar">
       <div class="status-left">
         <div class="dot"></div>
-        <span id="statusText">GitHub-тан деректер жүктелуде...</span>
+        <span id="statusText">Сабақ параметрлерін таңдаңыз</span>
       </div>
       <span id="userName"></span>
     </div>
 
-    <div style="height:8px;"></div>
+    <!-- Сынып / Бөлім / Тақырып таңдағышы -->
+    <div class="selectors">
+      <div class="select-group">
+        <label for="classSelect">Сынып</label>
+        <select id="classSelect">
+          <option value="">Сыныпты таңдаңыз</option>
+        </select>
+      </div>
+      <div class="select-group">
+        <label for="sectionSelect">Бөлім</label>
+        <select id="sectionSelect" disabled>
+          <option value="">Бөлімді таңдаңыз</option>
+        </select>
+      </div>
+      <div class="select-group">
+        <label for="topicSelect">Тақырып</label>
+        <select id="topicSelect" disabled>
+          <option value="">Тақырыпты таңдаңыз</option>
+        </select>
+      </div>
+    </div>
 
     <div class="section-grid">
       <!-- Презентация (PDF) -->
@@ -256,7 +311,7 @@
           <span class="section-tag">GitHub</span>
         </div>
         <div class="section-body" id="presentationBody">
-          PDF-сілтеме дайындалуда...
+          Алдымен сынып, бөлім және тақырыпты таңдаңыз.
         </div>
       </section>
 
@@ -267,7 +322,7 @@
           <span class="section-tag">GitHub</span>
         </div>
         <div class="section-body" id="theoryBody">
-          PDF-сілтеме дайындалуда...
+          Алдымен сынып, бөлім және тақырыпты таңдаңыз.
         </div>
       </section>
     </div>
@@ -280,7 +335,7 @@
       </div>
       <div class="section-body">
         <div id="quizContainer" class="quiz-container">
-          Сұрақтар жүктелуде...
+          Алдымен тақырып таңдаңыз.
         </div>
 
         <div class="quiz-actions">
@@ -295,26 +350,7 @@
 </div>
 
 <script>
-  // ================== КОНФИГ ==================
-
-  // Сабақ атауы (осыны өзгертіп қоясың)
-  const LESSON_TITLE = "Сабақтың атауы осында";
-
-  // PDF-тердің нақты сілтемелерін осында қоясың
-  // Мысалы:
-  // https://github.com/user/repo/blob/main/lesson1/theory.pdf?raw=1
-  const GITHUB_THEORY_PDF_URL =
-    "https://github.com/AR94NUR/telegram-lms/blob/main/lesson1/1-ТАҚЫРЫП.pdf?raw=1";
-
-  const GITHUB_PRESENTATION_PDF_URL =
-    "https://github.com/AR94NUR/telegram-lms/blob/main/lesson1/1-taqirip.pdf?raw=1";
-
-  // Тест сұрақтары .txt түрінде (raw link!)
-  const GITHUB_QUESTIONS_URL =
-    "https://raw.githubusercontent.com/AR94NUR/telegram-lms/refs/heads/main/lesson1/questions.txt";
-
   const tg = window.Telegram?.WebApp;
-
   if (tg) {
     tg.expand();
     tg.ready();
@@ -329,7 +365,6 @@
       }
     } catch (e) {}
   }
-
   setUserName();
 
   function setStatus(text) {
@@ -357,20 +392,177 @@
     return await response.text();
   }
 
-  // ================== PDF-LINK РЕНДЕР ==================
+  // ================== LESSON CONFIG ==================
+  // МЫНАНЫҢ ІШІНДЕ БАРЛЫҚ САБАҚТАРДЫ ТІЗІП ШЫҒАСЫҢ
+  // ӘР ЖОЛ – ЖЕКЕ САБАҚ
+  const LESSONS = [
+    {
+      class: "8-сынып",
+      section: "Интернет және желілер",
+      topic: "IP-мекенжай және маска",
+      lessonTitle: "IP-мекенжай және желі маскасы",
+      theoryPdf: "https://github.com/username/repo/blob/main/lesson1/theory.pdf?raw=1",
+      presentationPdf: "https://github.com/username/repo/blob/main/lesson1/presentation.pdf?raw=1",
+      questionsUrl: "https://raw.githubusercontent.com/username/repo/main/lesson1/questions.txt"
+    },
+    {
+      class: "8-сынып",
+      section: "Интернет және желілер",
+      topic: "DNS және домендер",
+      lessonTitle: "Домендік атаулар және DNS",
+      theoryPdf: "https://github.com/username/repo/blob/main/lesson2/theory.pdf?raw=1",
+      presentationPdf: "https://github.com/username/repo/blob/main/lesson2/presentation.pdf?raw=1",
+      questionsUrl: "https://raw.githubusercontent.com/username/repo/main/lesson2/questions.txt"
+    },
+    {
+      class: "9-сынып",
+      section: "Алгоритмдеу",
+      topic: "Циклдер: While",
+      lessonTitle: "While циклі",
+      theoryPdf: "https://github.com/username/repo/blob/main/lesson3/theory.pdf?raw=1",
+      presentationPdf: "https://github.com/username/repo/blob/main/lesson3/presentation.pdf?raw=1",
+      questionsUrl: "https://raw.githubusercontent.com/username/repo/main/lesson3/questions.txt"
+    }
+  ];
+
+  // ================== SELECTOR ЛОГИКАСЫ ==================
+
+  const classSelect = document.getElementById("classSelect");
+  const sectionSelect = document.getElementById("sectionSelect");
+  const topicSelect = document.getElementById("topicSelect");
+
+  let currentLesson = null;
+  let quizData = [];
+
+  function initClassOptions() {
+    const classes = [...new Set(LESSONS.map(l => l.class))];
+    for (const cls of classes) {
+      const opt = document.createElement("option");
+      opt.value = cls;
+      opt.textContent = cls;
+      classSelect.appendChild(opt);
+    }
+  }
+
+  function updateSectionOptions() {
+    sectionSelect.innerHTML = '<option value="">Бөлімді таңдаңыз</option>';
+    topicSelect.innerHTML = '<option value="">Тақырыпты таңдаңыз</option>';
+    sectionSelect.disabled = true;
+    topicSelect.disabled = true;
+
+    const cls = classSelect.value;
+    if (!cls) return;
+
+    const sections = [...new Set(
+      LESSONS.filter(l => l.class === cls).map(l => l.section)
+    )];
+
+    for (const sec of sections) {
+      const opt = document.createElement("option");
+      opt.value = sec;
+      opt.textContent = sec;
+      sectionSelect.appendChild(opt);
+    }
+
+    sectionSelect.disabled = false;
+  }
+
+  function updateTopicOptions() {
+    topicSelect.innerHTML = '<option value="">Тақырыпты таңдаңыз</option>';
+    topicSelect.disabled = true;
+
+    const cls = classSelect.value;
+    const sec = sectionSelect.value;
+    if (!cls || !sec) return;
+
+    const topics = LESSONS
+      .filter(l => l.class === cls && l.section === sec)
+      .map(l => l.topic);
+
+    for (const t of topics) {
+      const opt = document.createElement("option");
+      opt.value = t;
+      opt.textContent = t;
+      topicSelect.appendChild(opt);
+    }
+
+    topicSelect.disabled = false;
+  }
+
+  function onTopicSelected() {
+    const cls = classSelect.value;
+    const sec = sectionSelect.value;
+    const topic = topicSelect.value;
+
+    currentLesson = LESSONS.find(
+      l => l.class === cls && l.section === sec && l.topic === topic
+    ) || null;
+
+    quizData = [];
+    document.getElementById("quizContainer").textContent = "Сұрақтар жүктелуде...";
+    document.getElementById("submitQuizBtn").disabled = true;
+    document.getElementById("quizResult").textContent = "";
+    setGlobalError("");
+
+    if (!currentLesson) {
+      document.getElementById("lessonTitle").textContent = "Сабақ табылмады";
+      document.getElementById("presentationBody").textContent = "Бұл параметрлер үшін сабақ жоқ.";
+      document.getElementById("theoryBody").textContent = "Бұл параметрлер үшін сабақ жоқ.";
+      setStatus("Сабақ табылмады.");
+      return;
+    }
+
+    document.getElementById("lessonTitle").textContent = currentLesson.lessonTitle || "Сабақ";
+    renderPdfLinks();
+    loadQuestions();
+  }
+
+  classSelect.addEventListener("change", () => {
+    updateSectionOptions();
+    document.getElementById("lessonTitle").textContent = "Сабақты таңдаңыз";
+    document.getElementById("presentationBody").textContent = "Алдымен бөлім және тақырыпты таңдаңыз.";
+    document.getElementById("theoryBody").textContent = "Алдымен бөлім және тақырыпты таңдаңыз.";
+    document.getElementById("quizContainer").textContent = "Алдымен тақырып таңдаңыз.";
+    document.getElementById("submitQuizBtn").disabled = true;
+    document.getElementById("quizResult").textContent = "";
+    setStatus("Бөлім мен тақырыпты таңдаңыз.");
+  });
+
+  sectionSelect.addEventListener("change", () => {
+    updateTopicOptions();
+    document.getElementById("lessonTitle").textContent = "Сабақты таңдаңыз";
+    document.getElementById("presentationBody").textContent = "Алдымен тақырыпты таңдаңыз.";
+    document.getElementById("theoryBody").textContent = "Алдымен тақырыпты таңдаңыз.";
+    document.getElementById("quizContainer").textContent = "Алдымен тақырып таңдаңыз.";
+    document.getElementById("submitQuizBtn").disabled = true;
+    document.getElementById("quizResult").textContent = "";
+    setStatus("Тақырыпты таңдаңыз.");
+  });
+
+  topicSelect.addEventListener("change", () => {
+    if (!topicSelect.value) return;
+    setStatus("Сабақ деректері жүктелуде...");
+    onTopicSelected();
+  });
+
+  // ================== PDF LINK РЕНДЕР ==================
 
   function renderPdfLinks() {
-    document.getElementById("lessonTitle").textContent = LESSON_TITLE;
-
     const presBody = document.getElementById("presentationBody");
     const theoryBody = document.getElementById("theoryBody");
 
     presBody.innerHTML = "";
     theoryBody.innerHTML = "";
 
-    if (GITHUB_PRESENTATION_PDF_URL) {
+    if (!currentLesson) {
+      presBody.textContent = "Сабақ таңдалмаған.";
+      theoryBody.textContent = "Сабақ таңдалмаған.";
+      return;
+    }
+
+    if (currentLesson.presentationPdf) {
       const a = document.createElement("a");
-      a.href = GITHUB_PRESENTATION_PDF_URL;
+      a.href = currentLesson.presentationPdf;
       a.target = "_blank";
       a.rel = "noopener noreferrer";
       a.className = "link-btn";
@@ -380,9 +572,9 @@
       presBody.textContent = "Презентация PDF сілтемесі орнатылмаған.";
     }
 
-    if (GITHUB_THEORY_PDF_URL) {
+    if (currentLesson.theoryPdf) {
       const a = document.createElement("a");
-      a.href = GITHUB_THEORY_PDF_URL;
+      a.href = currentLesson.theoryPdf;
       a.target = "_blank";
       a.rel = "noopener noreferrer";
       a.className = "link-btn";
@@ -417,8 +609,6 @@
 
     return result;
   }
-
-  let quizData = [];
 
   function renderQuiz() {
     const container = document.getElementById("quizContainer");
@@ -461,15 +651,27 @@
 
   async function loadQuestions() {
     const container = document.getElementById("quizContainer");
+
+    if (!currentLesson || !currentLesson.questionsUrl) {
+      container.textContent = "Бұл тақырып үшін сұрақтар сілтемесі орнатылмаған.";
+      document.getElementById("submitQuizBtn").disabled = true;
+      setStatus("Сұрақтар табылмады.");
+      return;
+    }
+
     try {
-      const text = await safeFetch(GITHUB_QUESTIONS_URL);
+      setStatus("Сұрақтар жүктелуде...");
+      const text = await safeFetch(currentLesson.questionsUrl);
       quizData = parseQuestions(text);
       renderQuiz();
+      setStatus("Сабақ жүктелді.");
+      setGlobalError("");
     } catch (e) {
       console.error(e);
       container.textContent = "Сұрақтарды жүктеу кезінде қате.";
       setGlobalError("Тест сұрақтарын GitHub-тен жүктеу мүмкін болмады.");
       document.getElementById("submitQuizBtn").disabled = true;
+      setStatus("Қате пайда болды.");
     }
   }
 
@@ -512,7 +714,7 @@
           score,
           total,
           percent,
-          lessonTitle: Стартап деген не
+          lessonTitle: currentLesson?.lessonTitle || ""
         };
         tg.sendData(JSON.stringify(payload));
       }
@@ -524,18 +726,9 @@
   document.getElementById("submitQuizBtn").addEventListener("click", handleSubmitQuiz);
 
   // ================== INIT ==================
-  (async function init() {
-    try {
-      setStatus("GitHub-тан деректер жүктелуде...");
-      renderPdfLinks();      // PDF сілтемелерін бірден шығарамыз
-      await loadQuestions(); // Тестті GitHub-тан жүктейміз
-      setStatus("Барлық деректер жүктелді.");
-      setGlobalError("");
-    } catch (e) {
-      console.error(e);
-      setStatus("Қате пайда болды.");
-      setGlobalError("GitHub-пен байланысты тексер.");
-    }
+  (function init() {
+    initClassOptions();
+    setStatus("Сыныпты таңдаңыз.");
   })();
 </script>
 </body>
