@@ -615,19 +615,17 @@
 
   // МІНЕ ОСЫ ЖЕР – TELEGRAM-ҒА НӘТИЖЕ ЖІБЕРУ
   if (tg && tg.sendData && currentLesson) {
-    const payload = {
-      type: "test_result",
-      score: correct,
-      total: total,
-      percent: percent,
-      className: currentLesson.cls.className,
-      sectionName: currentLesson.sec.sectionName,
-      topicName: currentLesson.topic.topicName
-    };
-    tg.sendData(JSON.stringify(payload));
-    // Қаласаң, тесттен кейін WebApp-ты жауып тастауға да болады:
-    // tg.close();
-  }
+  const payload = {
+    type: "test_result",
+    score: correct,
+    total: total,
+    percent: percent,
+    className: currentLesson.cls.className,
+    sectionName: currentLesson.sec.sectionName,
+    topicName: currentLesson.topic.topicName
+  };
+  tg.sendData(JSON.stringify(payload));
+}
 };
 
         container.appendChild(checkBtn);
@@ -647,3 +645,4 @@
   </script>
 </body>
 </html>
+
