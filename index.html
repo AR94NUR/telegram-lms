@@ -297,6 +297,7 @@
         <div class="tabs">
           <div class="tab active" data-tab="theory">Теория</div>
           <div class="tab" data-tab="presentation">Презентация</div>
+          <div class="tab" data-tab="kmzh">ҚМЖ</div>
           <div class="tab" data-tab="video">Видео</div>
           <div class="tab" data-tab="test">Тест</div>
         </div>
@@ -536,6 +537,24 @@
         } else {
           tabContent.innerHTML = `<div class="card-inner">Бұл тақырыпқа презентация тіркелмеген.</div>`;
         }
+        else if (tabName === "kmzh") {
+  // ЖАҢА ҚМЖ ТАБЫ
+  if (topic.kmzhPdfUrl) {
+    tabContent.innerHTML = `
+      <div class="card-inner">
+        <p style="font-size:13px; margin-top:0;">
+          ҚМЖ файлын ашу үшін төмендегі сілтемені басыңыз:
+        </p>
+        <a href="${topic.kmzhPdfUrl}"
+           target="_blank"
+           style="color:#38bdf8; font-size:13px;">
+          ҚМЖ (PDF)
+        </a>
+      </div>
+    `;
+  } else {
+    tabContent.innerHTML = `<div class="card-inner">Бұл тақырыпқа ҚМЖ файлы тіркелмеген.</div>`;
+  }
       } else if (tabName === "video") {
         if (topic.videoUrl) {
           tabContent.innerHTML = `
@@ -645,4 +664,5 @@
   </script>
 </body>
 </html>
+
 
