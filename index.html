@@ -20,9 +20,7 @@
       --success: #4ade80;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -308,7 +306,7 @@
     </div>
 
     <div class="footer">
-      🧠 Оқытушыға арналған эксперименттік мини-LMS
+      🧠 Оқытушыға арналған эксперименттік mini-LMS
     </div>
   </div>
 
@@ -322,81 +320,81 @@
 
     // ==== ДАННЫЕ УРОКОВ ===========================================
     const lessonsData = [
-  {
-    className: "11-сынып",
-    sections: [
       {
-        sectionName: "Стартап",
-        topics: [
+        className: "11-сынып",
+        sections: [
           {
-            topicName: "Стартап деген не?",
+            sectionName: "Стартап",
+            topics: [
+              {
+                topicName: "Стартап деген не?",
 
-            // Егер теория PDF форматта болса:
-            theory: "",  // қажет болмаса бос қалдыра бер
-            theoryPdfUrl: "https://github.com/AR94NUR/telegram-lms/blob/main/lesson1/1-ТАҚЫРЫП.pdf?raw=1",
+                // Теория PDF форматта
+                theory: "",
+                theoryPdfUrl: "https://github.com/AR94NUR/telegram-lms/blob/main/lesson1/1-ТАҚЫРЫП.pdf?raw=1",
 
-            presentationUrl: "https://github.com/AR94NUR/telegram-lms/blob/main/lesson1/1-taqirip.pdf?raw=1",
-            videoUrl: "https://youtu.be/9vpnrNcAi9s?si=0z-aYweIQWdTtpjW",
-            test: [
-  {
-    question: "1) Стартаптың бастапқы кезеңі қалай аталады?",
-    options: [
-      "Seed",
-      "Beta",
-      "Pre-seed",
-      "Prototype"
-    ],
-    correctIndex: 2 // A:3 → Pre-seed
-  },
-  {
-    question: "2) Seed кезеңінде не орындалады?",
-    options: [
-      "Прототип құру",
-      "Нарықты зерттеу",
-      "Өнімді сату",
-      "Альфа тест"
-    ],
-    correctIndex: 1 // A:2 → Нарықты зерттеу
-  },
-  {
-    question: "3) Альфа нұсқа деген не?",
-    options: [
-      "Өнімнің алғашқы идеясы",
-      "Кең аудиторияға шығару",
-      "Шағын топқа тестілеу",
-      "Прототип құрастыру"
-    ],
-    correctIndex: 2 // A:3 → Шағын топқа тестілеу
-  },
-  {
-    question: "4) Стартаптың мақсаты қандай?",
-    options: [
-      "Жай трендке қосылу",
-      "Пайдалы өнім шығару",
-      "Тек ақша жинау",
-      "Прототипті көбейту"
-    ],
-    correctIndex: 1 // A:2 → Пайдалы өнім шығару
-  },
-  {
-    question: "5) Көшірме стартап деген",
-    options: [
-      "Нарық басып алу",
-      "Шетелдік жобаның көшірмесі",
-      "Белгісіз бағыт",
-      "Технологиясыз стартап"
-    ],
-    correctIndex: 1 // A:2 → Шетелдік жобаның көшірмесі
-  }
-]
+                presentationUrl: "https://github.com/AR94NUR/telegram-lms/blob/main/lesson1/1-taqirip.pdf?raw=1",
+                // YouTube embed-ке аудару дұрысырақ, бірақ сен берген сілтемені сол күйі қалдырамын
+                videoUrl: "https://www.youtube.com/embed/9vpnrNcAi9s",
 
+                test: [
+                  {
+                    question: "1) Стартаптың бастапқы кезеңі қалай аталады?",
+                    options: [
+                      "Seed",
+                      "Beta",
+                      "Pre-seed",
+                      "Prototype"
+                    ],
+                    correctIndex: 2
+                  },
+                  {
+                    question: "2) Seed кезеңінде не орындалады?",
+                    options: [
+                      "Прототип құру",
+                      "Нарықты зерттеу",
+                      "Өнімді сату",
+                      "Альфа тест"
+                    ],
+                    correctIndex: 1
+                  },
+                  {
+                    question: "3) Альфа нұсқа деген не?",
+                    options: [
+                      "Өнімнің алғашқы идеясы",
+                      "Кең аудиторияға шығару",
+                      "Шағын топқа тестілеу",
+                      "Прототип құрастыру"
+                    ],
+                    correctIndex: 2
+                  },
+                  {
+                    question: "4) Стартаптың мақсаты қандай?",
+                    options: [
+                      "Жай трендке қосылу",
+                      "Пайдалы өнім шығару",
+                      "Тек ақша жинау",
+                      "Прототипті көбейту"
+                    ],
+                    correctIndex: 1
+                  },
+                  {
+                    question: "5) Көшірме стартап деген",
+                    options: [
+                      "Нарық басып алу",
+                      "Шетелдік жобаның көшірмесі",
+                      "Белгісіз бағыт",
+                      "Технологиясыз стартап"
+                    ],
+                    correctIndex: 1
+                  }
+                ]
+              }
+            ]
           }
         ]
       }
-    ]
-  },
-];
-
+    ];
 
     // ==== UI ЛОГИКА ===============================================
     const classSelect   = document.getElementById("classSelect");
@@ -409,9 +407,9 @@
     const tabContent    = document.getElementById("tabContent");
     const tabs          = document.querySelectorAll(".tab");
 
-    let currentLesson = null; // { cls, sec, topic }
+    let currentLesson = null;
 
-    // Заполняем список классов
+    // Класстарды толтыру
     lessonsData.forEach((c, idx) => {
       const opt = document.createElement("option");
       opt.value = idx;
@@ -421,6 +419,7 @@
 
     classSelect.addEventListener("change", () => {
       const classIndex = classSelect.value;
+
       sectionSelect.innerHTML = '<option value="">– таңдаңыз –</option>';
       topicSelect.innerHTML   = '<option value="">– таңдаңыз –</option>';
       sectionSelect.disabled = true;
@@ -444,6 +443,7 @@
     sectionSelect.addEventListener("change", () => {
       const classIndex   = classSelect.value;
       const sectionIndex = sectionSelect.value;
+
       topicSelect.innerHTML = '<option value="">– таңдаңыз –</option>';
       topicSelect.disabled  = true;
       openLessonBtn.disabled = true;
@@ -498,28 +498,27 @@
       if (!currentLesson) return;
       const topic = currentLesson.topic;
 
-        if (tabName === "theory") {
-    // Егер PDF-сілтеме бар болса – сілтеме көрсетеміз
-    if (topic.theoryPdfUrl) {
-      tabContent.innerHTML = `
-        <div class="card-inner">
-          <p style="font-size:13px; margin-top:0;">
-            Теорияны ашу үшін төмендегі сілтемені басыңыз:
-          </p>
-          <a href="${topic.theoryPdfUrl}"
-             target="_blank"
-             style="color:#38bdf8; font-size:13px;">
-            Теория (PDF)
-          </a>
-        </div>
-      `;
-    } else {
-      // Егер PDF жоқ болса, ескі текстік вариантты қалдырамыз
-      tabContent.innerHTML = `
-        <div class="card-inner">
-          <pre style="white-space:pre-wrap; font-family:inherit;">${(topic.theory || "").trim()}</pre>
-        </div>
-        `;
+      if (tabName === "theory") {
+        if (topic.theoryPdfUrl) {
+          tabContent.innerHTML = `
+            <div class="card-inner">
+              <p style="font-size:13px; margin-top:0;">
+                Теорияны ашу үшін төмендегі сілтемені басыңыз:
+              </p>
+              <a href="${topic.theoryPdfUrl}"
+                 target="_blank"
+                 style="color:#38bdf8; font-size:13px;">
+                Теория (PDF)
+              </a>
+            </div>
+          `;
+        } else {
+          tabContent.innerHTML = `
+            <div class="card-inner">
+              <pre style="white-space:pre-wrap; font-family:inherit;">${(topic.theory || "").trim()}</pre>
+            </div>
+          `;
+        }
       } else if (tabName === "presentation") {
         if (topic.presentationUrl) {
           tabContent.innerHTML = `
@@ -528,7 +527,7 @@
                 Презентацияны ашу үшін төмендегі сілтемені басыңыз:
               </p>
               <a href="${topic.presentationUrl}" target="_blank" style="color:#38bdf8; font-size:13px;">
-                Презентацияны ашу
+                Презентация (PDF)
               </a>
             </div>
           `;
@@ -591,42 +590,42 @@
         resultBox.className = "result";
 
         checkBtn.onclick = () => {
-  let correct = 0;
-  topic.test.forEach((q, qIndex) => {
-    const selected = container.querySelector(
-      `input[name="q${qIndex}"]:checked`
-    );
-    if (!selected) return;
-    const answerIndex = parseInt(selected.value, 10);
-    if (answerIndex === q.correctIndex) correct++;
-  });
+          let correct = 0;
+          topic.test.forEach((q, qIndex) => {
+            const selected = container.querySelector(
+              `input[name="q${qIndex}"]:checked`
+            );
+            if (!selected) return;
+            const answerIndex = parseInt(selected.value, 10);
+            if (answerIndex === q.correctIndex) correct++;
+          });
 
-  const total = topic.test.length;
-  const percent = total > 0 ? Math.round((correct / total) * 100) : 0;
+          const total = topic.test.length;
+          const percent = total > 0 ? Math.round((correct / total) * 100) : 0;
 
-  resultBox.textContent =
-    `Дұрыс жауаптар: ${correct} / ${total}`;
-  resultBox.classList.remove("ok", "bad");
-  if (correct === total) {
-    resultBox.classList.add("ok");
-  } else {
-    resultBox.classList.add("bad");
-  }
+          resultBox.textContent =
+            `Дұрыс жауаптар: ${correct} / ${total}`;
+          resultBox.classList.remove("ok", "bad");
+          if (correct === total) {
+            resultBox.classList.add("ok");
+          } else {
+            resultBox.classList.add("bad");
+          }
 
-  // МІНЕ ОСЫ ЖЕР – TELEGRAM-ҒА НӘТИЖЕ ЖІБЕРУ
-  if (tg && tg.sendData && currentLesson) {
-  const payload = {
-    type: "test_result",
-    score: correct,
-    total: total,
-    percent: percent,
-    className: currentLesson.cls.className,
-    sectionName: currentLesson.sec.sectionName,
-    topicName: currentLesson.topic.topicName
-  };
-  tg.sendData(JSON.stringify(payload));
-}
-};
+          // Telegram-ға нәтиже жіберу
+          if (tg && tg.sendData && currentLesson) {
+            const payload = {
+              type: "test_result",
+              score: correct,
+              total: total,
+              percent: percent,
+              className: currentLesson.cls.className,
+              sectionName: currentLesson.sec.sectionName,
+              topicName: currentLesson.topic.topicName
+            };
+            tg.sendData(JSON.stringify(payload));
+          }
+        };
 
         container.appendChild(checkBtn);
         container.appendChild(resultBox);
@@ -641,8 +640,6 @@
         setActiveTab(t.dataset.tab);
       });
     });
-
   </script>
 </body>
 </html>
-
